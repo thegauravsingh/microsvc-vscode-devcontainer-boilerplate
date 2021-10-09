@@ -1,17 +1,14 @@
-FROM python:3-alpine
+FROM python:3.8-slim-bullseye
 
 RUN mkdir -p /data/microservice
 
 # We copy just the requirements.txt first to leverage Docker cache
-COPY ["requirements.txt","app.py", "/data/"]
-COPY ["microservice/", "/data/microservice/"]
+COPY ["backend/requirements.txt","backend/app.py", "/data/"]
+COPY ["backend/microservice/", "/data/microservice/"]
 
-RUN apk update \
-  && apk add --virtual build-deps gcc python3-dev musl-dev \
-  && apk add postgresql-dev \
-  && pip install --upgrade pip \
-  && pip install -r /data/requirements.txt \
-  && apk del build-deps
+RUN apt update \
+&& pip install --upgrade pip \
+&& pip install --no-cache-dir -r /data/requirements.txt 
 
 WORKDIR /data
 
